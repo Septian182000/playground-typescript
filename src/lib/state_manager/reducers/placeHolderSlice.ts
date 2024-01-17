@@ -3,30 +3,22 @@ import { RootState } from "../store";
 import axios from "axios";
 
 export const getPlaceData = createAsyncThunk("get/placeholder", async () => {
-  const apiUrl = "https://jsonplaceholder.typicode.com/posts";
-  const response = await axios.get(apiUrl);
-  return response.data;
-});
-
-// POST Data
-interface PostPlaceDataPayload {
-    newData: any;
-}
-
-export const postPlaceData = createAsyncThunk("post/placeholder", async (payload: PostPlaceDataPayload) => {
+  try {
     const apiUrl = "https://jsonplaceholder.typicode.com/posts";
-    const response = await axios.post(apiUrl, payload.newData);
+    const response = await axios.get(apiUrl);
     return response.data;
+  } catch (error) {
+    return (error as Error).message;
+  }
 });
-// 
 
-interface ServerState {
-  data: Record<string, any>;
+type ServerState = {
+  data: { body: string; id: number; title: string }[];
   status: string;
-}
+};
 
 const initialState: ServerState = {
-  data: {},
+  data: [],
   status: "loading",
 };
 
@@ -36,20 +28,15 @@ export const placeHolderSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(getPlaceData.fulfilled,(state, action: PayloadAction<ServerState["data"]>) => {
-        state.data = action.payload;
-        state.status = "success";
-      })
+      .addCase(
+        getPlaceData.fulfilled,
+        (state, action: PayloadAction<ServerState["data"]>) => {
+          state.data = action.payload;
+          state.status = "success";
+        }
+      )
       .addCase(getPlaceData.pending, (state) => {
-        state.data = {};
-        state.status = "loading";
-      })
-      .addCase(postPlaceData.fulfilled,(state, action: PayloadAction<ServerState["data"]>) => {
-        state.data = action.payload;
-        state.status = "success add";
-      })
-      .addCase(postPlaceData.pending, (state) => {
-        state.data = {};
+        state.data = [];
         state.status = "loading";
       });
   },

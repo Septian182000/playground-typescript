@@ -1,17 +1,12 @@
-import { InputGroup, FormControl } from "react-bootstrap";
 import React from "react";
+import { InputGroup, FormControl, FormControlProps } from "react-bootstrap";
 
-interface NormalTextFieldProps {
-  placeholder: string;
-  input: string;
-  onChanged: any;
-}
+type NormalTextFieldType = FormControlProps;
 
-export const NormalTextField: React.FC<NormalTextFieldProps> = ({
-  placeholder,
-  input,
-  onChanged,
-}) => {
+export const NormalTextField: React.FC<NormalTextFieldType> = ({
+  children,
+  ...props
+}: NormalTextFieldType) => {
   return (
     <InputGroup
       style={{
@@ -20,10 +15,7 @@ export const NormalTextField: React.FC<NormalTextFieldProps> = ({
       }}
     >
       <FormControl
-        placeholder={placeholder}
-        value={input}
-        onChange={onChanged}
-        aria-label="time"
+        {...props}
         style={{
           color: "black",
           fontFamily: "Rubik",
@@ -32,6 +24,20 @@ export const NormalTextField: React.FC<NormalTextFieldProps> = ({
           backgroundColor: "white",
         }}
       />
+      {children ? (
+        <InputGroup.Text
+          style={{
+            backgroundColor: "transparent",
+            border: "1px solid rgba(65, 65, 80, 1)",
+            borderLeft: "transparent",
+            cursor: "pointer",
+          }}
+        >
+          {children}
+        </InputGroup.Text>
+      ) : (
+        ""
+      )}
     </InputGroup>
   );
 };
